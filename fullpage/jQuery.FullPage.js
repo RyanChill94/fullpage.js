@@ -120,18 +120,15 @@
                 $this.data('form.fullPage', (data = new FullPage(this, options)));
                 //console.log($this.data('form.fullPage'));
             }
-            /**/
-            if (typeof option == 'string') {
-                data[option].call($this);
-            }
+
 
         });
     };
 
-    /**/
+    /*指定构造函数*/
     $.fn.fullPage.Constructor = FullPage;
 
-    /**/
+    /*noConflict*/
     $.fn.fullPage.noConflict = function () {
         $.fn.fullpage = old;
         return this;
