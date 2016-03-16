@@ -1,0 +1,110 @@
+@font-face {
+    font-family: 'webfont';
+    src: url('//at.alicdn.com/t/8n20n91u532wewmi.eot'); /* IE9*/
+    src: url('//at.alicdn.com/t/8n20n91u532wewmi.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('//at.alicdn.com/t/8n20n91u532wewmi.woff') format('woff'), /* chrome、firefox */ url('//at.alicdn.com/t/8n20n91u532wewmi.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/ url('//at.alicdn.com/t/8n20n91u532wewmi.svg#NotoSansHans-DemiLight') format('svg'); /* iOS 4.1- */
+}
+
+html, body {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'webfont,微软雅黑';
+}
+
+.section-group {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    -webkit-transition: 1s cubic-bezier(.86, 0, .07, 1);
+    transition: 1s cubic-bezier(.86, 0, .07, 1);
+}
+
+.section-group > section {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.section-group > section h2 {
+    font-size: 50px;
+    text-align: center;
+    padding-top: 20px;
+    /* 标题上升效果*/
+    -webkit-transform: translateY(50px);
+    transform: translateY(50px);
+    -webkit-transition: 1s .8s;
+    transition: 1s .8s;
+}
+
+.section-group > section.active h2 {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+}
+
+.area-01 {
+    background: #A1CD7C
+}
+
+.area-02 {
+    background: #79AAC8
+}
+
+.area-03 {
+    background: #C779C8
+}
+
+.area-04 {
+    background: #D9AC83
+}
+
+.area-05 {
+    background: #d1d9d3
+}
+
+.pagination {
+    position: absolute;
+    top: 50%;
+    right: 50px;
+    z-index: 999;
+}
+
+.pagination > li {
+    width: 14px;
+    height: 14px;
+    background: rgba(0, 0, 0, .6);
+    margin: 16px 0;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    list-style: none;
+}
+
+.pagination > li > span {
+    position: absolute;
+    right: 140%;
+    top: -6px;
+    padding: 0 10px;
+    height: 26px;
+    line-height: 26px;
+    background: rgba(0, 0, 0, .6);
+    border-radius: 13px;
+    white-space: nowrap;
+    font-size: 12px;
+    color: #fff;
+    opacity: 0;
+    -webkit-transition: .6s;
+    transition: .6s;
+    -webkit-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
+.pagination > li:hover > span, .pagination > li.active > span {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+}
