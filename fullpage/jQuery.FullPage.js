@@ -2,33 +2,38 @@
  * Created by Ryanchill on 2016/3/16.
  */
 (function ($) {
-    /*¹¹Ôìº¯Êı*/
-    var FullPage = function (elemClassName,options) {
+    /*æ„é€ å‡½æ•°*/
+    var FullPage = function (elemClassName, options) {
         this.$group = $(elemClassName);
-        this.$sections = this.$group.find('>section'); /*²»Í¬·ÖÒ³*/
+        this.$sections = this.$group.find('>section');
+        /*ä¸åŒåˆ†é¡µ*/
         this.$sectionCount = this.$sections.length;
         this.mFlag = false;
-        /*Ê¹ÓÃ$.extend(defaults,options)½«Ä¬ÈÏÖµºÍ´«ÈëµÄ²ÎÊı½øĞĞºÏ²¢*/
+        /*ä½¿ç”¨$.extend(defaults,options)å°†é»˜è®¤å€¼å’Œä¼ å…¥çš„å‚æ•°è¿›è¡Œåˆå¹¶*/
         this.options = $.extend({}, FullPage.DEFAULTS, options);
         this.init();
         this.event();
     };
 
-    /*Ä¬ÈÏ²ÎÊıÈë¿Ú*/
+    /*é»˜è®¤å‚æ•°å…¥å£
+     * @param {string} opt.animation æ¯ä¸€ä¸ªåœºæ™¯çš„å˜æ¢æ—¶é—´
+     * @param {boolean}opt.async æ˜¯å¦ä¸ºæ— é™æ»šåŠ¨ é»˜è®¤ä¸ºéæ— é™æ»šåŠ¨
+     * */
     FullPage.DEFAULTS = {
-        "animateTime": 1000
+        "animateTime": 1000,
+        "isInfinite": false
     };
 
-    /*³õÊ¼»¯º¯Êı*/
+    /*åˆå§‹åŒ–å‡½æ•°*/
     FullPage.prototype.init = function () {
         var $group = this.$group,
             $sections = this.$sections,
             html = ['<ul class ="pagination">'];
-        /*µ±Ç°µÄindex³õÊ¼»¯*/
+        /*å½“å‰çš„indexåˆå§‹åŒ–*/
         $group.data('index_flag', 0);
         $sections.first().addClass('active');
 
-        /*¶¯Ì¬Éú³ÉÑ¡Ôñ±êÇ©×é*/
+        /*åŠ¨æ€ç”Ÿæˆé€‰æ‹©æ ‡ç­¾ç»„*/
         for (var i = 0; i < this.$sectionCount; i++) {
             var item = $sections.eq(i),
                 title = item.data('title');
@@ -37,7 +42,7 @@
         html.push('</ul>');
         this.$pagination = $(html.join(''));
         this.$paginations = this.$pagination.find('>li');
-        /*´¹Ö±¾ÓÖĞ*/
+        /*å‚ç›´å±…ä¸­*/
         this.$pagination.appendTo($('body')).css('margin-top', '-' + this.$pagination.height() / 2 + 'px');
 
 
@@ -48,7 +53,7 @@
             $sections = this.$sections,
             animateTime = this.options.animateTime,
             that = this;
-        /*µã»÷ÊÂ¼ş¸Ä±äÁËÉÏÏÂÎÄ thisÖ¸Ïò´¥·¢clickÊÂ¼şµÄÔªËØ*/
+        /*ç‚¹å‡»äº‹ä»¶æ”¹å˜äº†ä¸Šä¸‹æ–‡ thisæŒ‡å‘è§¦å‘clickäº‹ä»¶çš„å…ƒç´ */
         $paginations.click(function () {
             var $this = $(this),
                 index = $this.index(),
@@ -56,18 +61,18 @@
                 last_index = that.$group.data('index_flag'),
                 $section = $sections.eq(index),
                 $last_section = $sections.eq(last_index);
-            //Èç¹ûÉÏ´Î±ä»»»¹Ã»½áÊø
+            //å¦‚æœä¸Šæ¬¡å˜æ¢è¿˜æ²¡ç»“æŸ
             if (that.mFlag) {
                 return false;
             }
-            //Èç¹ûÑ¡ÖĞ°´Å¥Îªµ±Ç°Ò³£¬Ôò²»·¢Éú±ä»»
+            //å¦‚æœé€‰ä¸­æŒ‰é’®ä¸ºå½“å‰é¡µï¼Œåˆ™ä¸å‘ç”Ÿå˜æ¢
             if (index == last_index) {
                 return false;
             }
-            /*¹ØÃÅ*/
+            /*å…³é—¨*/
             that.mflag = true;
 
-            /*×Ô¶¨ÒåÊÂ¼ş°ó¶¨*/
+            /*è‡ªå®šä¹‰äº‹ä»¶ç»‘å®š*/
             var le = $.Event('beforeHidden.from.fullpage', {item: $last_section});
             that.$group.trigger(le);
             var e = $.Event('beforeShow.from.fullpage', {item: $section});
@@ -81,7 +86,7 @@
                 '-webkit-transform': 'translateY(-' + translateY + '%)'
             });
             setTimeout(function () {
-                var le = $.Event('afterHidden.from.fullpage', {item: $l_section});
+                var le = $.Event('afterHidden.from.fullpage', {item: $last_section});
                 that.$group.trigger(le);
                 var e = $.Event('afterShow.from.fullpage', {item: $section});
                 that.$group.trigger(e);
@@ -96,36 +101,47 @@
     };
 
     FullPage.prototype.wheelEvent = function (delta) {
-        if (this.mflag) {
-            return;
-        }
+        var isInfinite = this.options.isInfinite;
+        // ä¸‹ç§» -1  ä¸Šç§» 1
         delta = delta > 0 ? 1 : -1;
+        //åˆ¤æ–­æ˜¯å¦æ˜¯ç¬¬ä¸€æ¬¡
         var index = this.$group.data('index_flag') ? this.$group.data('index_flag') : 0;
+        //index--> 1
         index = index - delta;
-        index = index < 0 ? 0 : (index > (this.$sectionCount - 1)) ? (this.$sectionCount - 1) : index;
+        //åˆ¤æ–­æœ‰æ²¡æœ‰è¶Šç•Œ
+        //æ— é™æ»šåŠ¨
+        if (isInfinite) {
+            index = index < 0 ? (this.$sectionCount - 1) : (index > (this.$sectionCount - 1)) ? 0 : index;
+        } else {
+            index = index < 0 ? 0 : (index > (this.$sectionCount - 1)) ? (this.$sectionCount - 1) : index;
+
+        }
         this.$paginations.eq(index).click();
     };
 
+    //ä¿å­˜æ—§çš„
     var old = $.fn.fullpage;
+
+    //æŒ‚è½½åˆ°å®ä¾‹æ–¹æ³•é‡Œé¢
     $.fn.fullPage = function (option) {
         return this.each(function () {
             var $this = $(this);
             var data = $this.data('form.fullPage');
-            /*geek Ğ´·¨ Ò×¶ÁĞÔ½Ï²î*/
+            /*geek å†™æ³• æ˜“è¯»æ€§è¾ƒå·®*/
             var options = typeof option == 'object' && option;
 
             /**/
             if (!data) {
-                /*½«ÊµÀı»¯Êı¾İ±£´æµ½µ±Ç°µÄÊµÀı»¯¶ÔÏóÖĞ*/
+                /*å°†å®ä¾‹åŒ–æ•°æ®ä¿å­˜åˆ°å½“å‰çš„å®ä¾‹åŒ–å¯¹è±¡ä¸­*/
                 $this.data('form.fullPage', (data = new FullPage(this, options)));
-                //console.log($this.data('form.fullPage'));
+                console.log($this);
             }
 
 
         });
     };
 
-    /*Ö¸¶¨¹¹Ôìº¯Êı*/
+    /*æŒ‡å®šæ„é€ å‡½æ•°*/
     $.fn.fullPage.Constructor = FullPage;
 
     /*noConflict*/
